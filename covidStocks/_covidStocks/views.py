@@ -7,6 +7,11 @@ import yfm
 from . import twitter_scrapper as ts
 
 def index(request):
+    try:
+        models.Company.objects.all().delete()
+        models.Tweets.objects.all().delete()
+    except Exception:
+        pass
     COMPANY_DICT = {
         'company_names': ['Johnson&Johnson','Pfizer','Moderna','AstraZeneca PLC',
                         'GlaxoSmithKline','NovaVax','Merck'],
@@ -19,5 +24,18 @@ def index(request):
                    ['NovaVax','NVAX','$NVAX'],
                    ['Merck','MRK','$MRK']]
     }
-    # ts.get_tweets(keyWords=COMPANY_DICT['keyWords'][1])
-    return HttpResponse()
+    for name,sym in zip(COMPANY_DICT['company_names'],COMPANY_DICT['company_symbols']):
+        models.Company.objects.create(Name = name,symbol=sym)
+
+    tweets = ts.get_tweets(dict=COMPANY_DICT)
+
+    for t in tweets:
+        compID = models.Company.objects.get(Name=t.company)
+        models.Tweets.objects.create(companyID=compID,
+                                     date=t.timestamp,
+                                     text=t.text,
+                                     userID=t.userID,
+                                     score=t.score,
+                                     interactions=t.interactions)
+
+    return HttpResponse("hi")

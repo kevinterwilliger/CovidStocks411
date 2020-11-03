@@ -12,8 +12,8 @@ class Tweets(models.Model):
 
 class Company(models.Model):
     companyID = models.AutoField(primary_key=True)
-    stockID = models.ForeignKey('ObservedStock',on_delete=models.CASCADE)
-    name = models.TextField(max_length=None)
+    # stockID = models.ForeignKey('ObservedStock',on_delete=models.CASCADE)
+    Name = models.TextField(max_length=None)
     symbol = models.TextField(max_length=None)
 
 class ObservedStock(models.Model):
