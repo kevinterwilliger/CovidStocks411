@@ -1,12 +1,29 @@
 from django.shortcuts import render
+from django.views.generic.list import ListView
 from django.http import HttpResponse
+from django.db.models import Q
+from .forms import TweetForm,TweetEdit
+import re
 # from vaderSentiment import SentimentIntensityAnalyzer
 from . import models
-import yfm
+#import yfm
 # import pandas as pd
 from . import twitter_scrapper as ts
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request):
+    if request.method == "POST":
+        form = TweetForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return show(request)
+            except:
+                logger.error("OOF")
+                pass
+
     try:
         models.Company.objects.all().delete()
         models.Tweets.objects.all().delete()
@@ -37,5 +54,42 @@ def index(request):
                                      userID=t.userID,
                                      score=t.score,
                                      interactions=t.interactions)
+    form = TweetForm()
+    return render(request,'index.html',{'form':form})
 
-    return HttpResponse("hi")
+
+def show(request):
+    tweets = models.Tweets.objects.all()
+    return render(request,"show.html",{'tweetsArr':tweets})
+
+class show2(ListView):
+    model = models.Tweets
+    paginate_by=25
+
+    def get_queryset(self):
+        tweets = models.Tweets.objects.all()
+        query = self.request.GET.get("q")
+        if query:
+            tweets = models.Tweets.objects.filter(
+                Q(text__icontains=query)
+            )
+        return tweets
+
+def edit(request, id):
+    tweets = models.Tweets.objects.get(tweetID=id)
+    return render(request,'edit.html', {'tweet':tweets})
+
+def update(request, id):
+    tweets = models.Tweets.objects.get(tweetID=id)
+    form = TweetForm(request.POST, instance = tweets)
+
+    if form.is_valid():
+        form.save()
+        return show(request)
+    else: logger.error(form.errors)
+    return render(request, 'edit.html', {'tweet': tweets})
+
+def destroy(request, id):
+    tweets = models.Tweets.objects.get(tweetID=id)
+    tweets.delete()
+    return show(request)

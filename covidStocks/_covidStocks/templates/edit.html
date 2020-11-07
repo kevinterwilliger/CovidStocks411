@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+</head>
+<body>
+<form method="POST" class="post-form" action="/update/{{tweet.tweetID}}">
+        {% csrf_token %}
+    <div class="container">
+<br>
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <h3>Update Details</h3>
+    </div>
+  </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Tweet Id:</label>
+    <div class="col-sm-4">
+        <input type="number" name="tweetID" id="id_tweetID" value="{{ tweet.tweetID }}"/>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Company Id:</label>
+    <div class="col-sm-4">
+        <input type="text" name="companyID" id="id_companyID" value="{{ tweet.companyID }}" />
+    </div>
+  </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Date:</label>
+    <div class="col-sm-4">
+        <input type="datetime-local" name="date" id="id_date" value="{{ tweet.date }}" />
+    </div>
+  </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Text:</label>
+    <div class="col-sm-4">
+        <input type="text" name="text" id="id_text" required maxlength="280" value="{{ tweet.text }}" />
+    </div>
+  </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">User Id:</label>
+    <div class="col-sm-4">
+        <input type="text" name="userID" id="id_userID" value="{{ tweet.userID }}" />
+    </div>
+  </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Score:</label>
+    <div class="col-sm-4">
+        <input type="number" name="score" id="id_score" value="{{ tweet.score }}" />
+      </div>
+    </div>
+    <div class="form-group row">
+    <label class="col-sm-2 col-form-label">Interactions:</label>
+    <div class="col-sm-4">
+        <input type="number" name="interactions" id="id_interactions" value="{{ tweet.interactions }}" />
+      </div>
+    </div>
+    <div class="form-group row">
+    <label class="col-sm-1 col-form-label"></label>
+    <div class="col-sm-4">
+    <button type="submit" class="btn btn-success">Update</button>
+    </div>
+  </div>
+    </div>
+</form>
+</body>
+</html>

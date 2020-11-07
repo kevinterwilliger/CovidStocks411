@@ -3,6 +3,7 @@ from json import load as jsload
 # import pandas as pd
 import textblob as tb
 from datetime import datetime
+import logging
 # import math
 
 COMPANY_DICT = {
@@ -10,13 +11,15 @@ COMPANY_DICT = {
                     'GlaxoSmithKline','NovaVax','Merck'],
     'company_symbols': ['JNJ','PFE','MRNA','AZN','GSK','NVAX','MRK'],
     'keyWords': [['Johnson&amp;Johnson','$JNJ','Johnson &amp; Johnson',"-Johnson"],
-               ['Pfizer','$PFE','PFE'],
+               ['Pfizer','$PFE'],
                ['Moderna','MRNA','$MRNA'],
-               ['AstraZeneca','AZN','Astra Zeneca','$AZN'],
+               ['AstraZeneca','Astra Zeneca','$AZN'],
                ['GSK','GlaxoSmithKline','$GSK'],
                ['NovaVax','NVAX','$NVAX'],
-               ['Merck','MRK','$MRK']]
+               ['Merck','$MRK']]
 }
+
+logger = logging.getLogger(__name__)
 
 class Tweet():
     def __init__(self, t, company):
@@ -46,15 +49,17 @@ def get_tweets(dict):
 # Something like:
 # (johnson&johnson OR j&j OR JNJ OR $JNJ) -Johnson lang:en
 def build_search_string(keyWords):
-    search_string = '("' + keyWords[0]
+    search_string = '(' + keyWords[0]
     minus_word = ""
     for w in keyWords:
         if w[0] == "-":
             minus_word = w
-        search_string = search_string + '" OR "' + w
-    search_string = search_string + ') lang:en '
+        search_string = search_string + ' OR ' + w
+    search_string = search_string + ')'
     if minus_word != "":
         search_string = search_string + " " + minus_word
+    search_string = search_string + ' lang:en -filter:links -filter:replies'
+    logger.error(search_string)
     return search_string
 
 def clean_tweets(tweets):
