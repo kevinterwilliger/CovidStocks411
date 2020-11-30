@@ -2,16 +2,20 @@ from django.shortcuts import render
 from django.views.generic.list import ListView
 from django.http import HttpResponse
 from django.db.models import Q
+import pprint
 from .forms import TweetForm,TweetEdit
 import re
-# from vaderSentiment import SentimentIntensityAnalyzer
+
 from . import models
-#import yfm
-# import pandas as pd
+import yfm
+from django.db.models import Avg, Count
 from . import twitter_scrapper as ts
+from . import stocks
 import logging
+from django_pandas.io import read_frame
 
 logger = logging.getLogger(__name__)
+
 
 def index(request):
     if request.method == "POST":
@@ -23,12 +27,12 @@ def index(request):
             except:
                 logger.error("OOF")
                 pass
+    # try:
+    #     models.Company.objects.all().delete()
+    #     # models.Tweets.objects.all().delete()
+    # except Exception:
+    #     pass
 
-    try:
-        models.Company.objects.all().delete()
-        models.Tweets.objects.all().delete()
-    except Exception:
-        pass
     COMPANY_DICT = {
         'company_names': ['Johnson&Johnson','Pfizer','Moderna','AstraZeneca PLC',
                         'GlaxoSmithKline','NovaVax','Merck'],
@@ -41,19 +45,37 @@ def index(request):
                    ['NovaVax','NVAX','$NVAX'],
                    ['Merck','MRK','$MRK']]
     }
-    for name,sym in zip(COMPANY_DICT['company_names'],COMPANY_DICT['company_symbols']):
-        models.Company.objects.create(Name = name,symbol=sym)
+    stockFetcher = yfm.fetcher()
+    stockFetcher.update()
+
+    # for name,sym in zip(COMPANY_DICT['company_names'],COMPANY_DICT['company_symbols']):
+    #     models.Company.objects.create(Name = name,symbol=sym)
+
+
 
     tweets = ts.get_tweets(dict=COMPANY_DICT)
 
     for t in tweets:
         compID = models.Company.objects.get(Name=t.company)
-        models.Tweets.objects.create(companyID=compID,
+        try:
+            models.Tweets.objects.get(tweetID=t.id)
+        except:
+            models.Tweets.objects.create(tweetID=t.id,
+                                     companyID=compID,
                                      date=t.timestamp,
                                      text=t.text,
                                      userID=t.userID,
                                      score=t.score,
                                      interactions=t.interactions)
+
+    sentiment = models.Tweets.objects.values(
+                                            'date','companyID__symbol'
+                                            ).annotate(
+                                                Sentiment = Avg('score')
+                                                      )
+    # logger.error(sentiment[0])
+    sentiment = read_frame(sentiment)
+    
     form = TweetForm()
     return render(request,'index.html',{'form':form})
 

@@ -25,6 +25,7 @@ class Tweet():
     def __init__(self, t, company):
         self.timestamp = datetime.strptime(t.created_at,"%a %b %d %H:%M:%S %z %Y")
         self.text = t.text
+        self.id = t.id
         self.userID = t.user.id
         self.score = tb.TextBlob(t.text).sentiment.polarity
         self.interactions = t.retweet_count + t.favorite_count

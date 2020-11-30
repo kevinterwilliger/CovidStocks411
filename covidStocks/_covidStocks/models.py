@@ -1,8 +1,9 @@
 from django.db import models
 
 class Tweets(models.Model):
-    tweetID = models.AutoField(primary_key=True)
-    companyID = models.ForeignKey('Company', on_delete=models.CASCADE)
+    # id = models.AutoField(primary_key=True)
+    tweetID = models.DecimalField(primary_key=True,max_digits=21,decimal_places=0)
+    companyID = models.ForeignKey('Company',on_delete=models.CASCADE)
     date = models.DateTimeField()
     text = models.TextField(max_length=280)
     userID = models.TextField(max_length=None)

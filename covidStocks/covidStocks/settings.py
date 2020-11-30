@@ -86,7 +86,11 @@ DATABASES = {
         'OPTIONS': {
             'charset': 'utf8mb4'
         }
-    }
+     }#,
+   #  'stock_db' : {
+   #    'ENGINE' : 'django_mongodb_engine',
+   #    'NAME' : 'yfmongo'
+   # }
 }
 
 
