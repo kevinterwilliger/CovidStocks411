@@ -4,7 +4,7 @@ class Tweets(models.Model):
     # id = models.AutoField(primary_key=True)
     tweetID = models.DecimalField(primary_key=True,max_digits=21,decimal_places=0)
     companyID = models.ForeignKey('Company',on_delete=models.CASCADE)
-    date = models.DateTimeField()
+    date = models.DateField()
     text = models.TextField(max_length=280)
     userID = models.TextField(max_length=None)
     score = models.FloatField()

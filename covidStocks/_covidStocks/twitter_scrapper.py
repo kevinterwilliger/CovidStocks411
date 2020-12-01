@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class Tweet():
     def __init__(self, t, company):
-        self.timestamp = datetime.strptime(t.created_at,"%a %b %d %H:%M:%S %z %Y")
+        self.timestamp = datetime.strptime(t.created_at,"%a %b %d %H:%M:%S %z %Y").date()
         self.text = t.text
         self.id = t.id
         self.userID = t.user.id

@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.db.models import Q
 import pprint
 from .forms import TweetForm,TweetEdit
-import re
+import pandas as pd
 
 from . import models
 import yfm
@@ -67,15 +67,19 @@ def index(request):
                                      userID=t.userID,
                                      score=t.score,
                                      interactions=t.interactions)
-
+    # models.Tweets.full_clean()
+    # models.Tweets.save()
     sentiment = models.Tweets.objects.values(
                                             'date','companyID__symbol'
                                             ).annotate(
                                                 Sentiment = Avg('score')
                                                       )
-    # logger.error(sentiment[0])
-    sentiment = read_frame(sentiment)
-    
+
+    sentiment = read_frame(sentiment).pivot(index="date",
+                                            columns="companyID__symbol",
+                                            values="Sentiment").fillna(value=0,axis=1)
+    sentiment.index = pd.to_datetime(sentiment.index)
+    stocks.write_predictions(COMPANY_DICT['company_symbols'],sentiment)
     form = TweetForm()
     return render(request,'index.html',{'form':form})
 
@@ -83,7 +87,6 @@ def index(request):
 def show(request):
     tweets = models.Tweets.objects.all()
     return render(request,"show.html",{'tweetsArr':tweets})
-
 class show2(ListView):
     model = models.Tweets
     paginate_by=25
@@ -96,7 +99,6 @@ class show2(ListView):
                 Q(text__icontains=query)
             )
         return tweets
-
 def edit(request, id):
     tweets = models.Tweets.objects.get(tweetID=id)
     return render(request,'edit.html', {'tweet':tweets})
