@@ -1,10 +1,8 @@
 import twitter
 from json import load as jsload
-# import pandas as pd
 import textblob as tb
 from datetime import datetime
 import logging
-# import math
 
 COMPANY_DICT = {
     'company_names': ['Johnson&Johnson','Pfizer','Moderna','AstraZeneca PLC',

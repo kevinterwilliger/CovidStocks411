@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.conf import settings
 from django.views.generic.list import ListView
 from django.http import HttpResponse
 from django.db.models import Q
@@ -13,26 +14,13 @@ from . import twitter_scrapper as ts
 from . import stocks
 import logging
 from django_pandas.io import read_frame
+from django.contrib.staticfiles import finders
+
+
 
 logger = logging.getLogger(__name__)
 
-
 def index(request):
-    if request.method == "POST":
-        form = TweetForm(request.POST)
-        if form.is_valid():
-            try:
-                form.save()
-                return show(request)
-            except:
-                logger.error("OOF")
-                pass
-    # try:
-    #     models.Company.objects.all().delete()
-    #     # models.Tweets.objects.all().delete()
-    # except Exception:
-    #     pass
-
     COMPANY_DICT = {
         'company_names': ['Johnson&Johnson','Pfizer','Moderna','AstraZeneca PLC',
                         'GlaxoSmithKline','NovaVax','Merck'],
@@ -67,8 +55,6 @@ def index(request):
                                      userID=t.userID,
                                      score=t.score,
                                      interactions=t.interactions)
-    # models.Tweets.full_clean()
-    # models.Tweets.save()
     sentiment = models.Tweets.objects.values(
                                             'date','companyID__symbol'
                                             ).annotate(
@@ -79,14 +65,29 @@ def index(request):
                                             columns="companyID__symbol",
                                             values="Sentiment").fillna(value=0,axis=1)
     sentiment.index = pd.to_datetime(sentiment.index)
-    stocks.write_predictions(COMPANY_DICT['company_symbols'],sentiment)
+    # stocks.write_predictions(COMPANY_DICT['company_symbols'],sentiment)
+    return render(request,'index.html')
+
+
+def create(request):
+    if request.method == "POST":
+        form = TweetForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return show(request)
+            except:
+                logger.error("OOF")
+                pass
+
     form = TweetForm()
-    return render(request,'index.html',{'form':form})
+    return render(request,'create.html',{'form':form})
 
 
 def show(request):
     tweets = models.Tweets.objects.all()
     return render(request,"show.html",{'tweetsArr':tweets})
+
 class show2(ListView):
     model = models.Tweets
     paginate_by=25
@@ -99,6 +100,7 @@ class show2(ListView):
                 Q(text__icontains=query)
             )
         return tweets
+        
 def edit(request, id):
     tweets = models.Tweets.objects.get(tweetID=id)
     return render(request,'edit.html', {'tweet':tweets})

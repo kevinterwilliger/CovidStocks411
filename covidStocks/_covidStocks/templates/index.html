@@ -5,71 +5,109 @@
     <title>Index</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+  <link rel="stylesheet" src="https://dygraphs.com/2.1.0/dygraph.css" />
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+  <!-- <script type="text/javascript"
+  src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script> -->
+  <script type="text/javascript"
+  src="https://dygraphs.com/2.1.0/dygraph.js"></script>
 </head>
+<style>
+body {
+  font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+  width: 130px;
+  position: fixed;
+  z-index: 1;
+  top: 20px;
+  left: 10px;
+  background: #eee;
+  overflow-x: hidden;
+  padding: 8px 0;
+}
+
+.sidenav a {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #2196F3;
+  display: block;
+}
+
+.sidenav a:hover {
+  color: #064579;
+}
+
+.main {
+  margin-left: 140px; /* Same width as the sidebar + left position in px */
+  font-size: 28px; /* Increased text to enable scrolling */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
 <body>
-<form method="POST" class="post-form" action="/index">
-        {% csrf_token %}
-    <div class="container">
-<br>
-    <div class="form-group row">
-    <label class="col-sm-1 col-form-label"></label>
-    <div class="col-sm-4">
-    <h3>Enter Details</h3>
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Tweet Id:</label>
-    <div class="col-sm-4">
-      {{ form.tweetID }}
-    </div>
-  </div>
-  <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Company Id:</label>
-    <div class="col-sm-4">
-      {{ form.companyID }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Date:</label>
-    <div class="col-sm-4">
-      {{ form.date }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Text:</label>
-    <div class="col-sm-4">
-      {{ form.text }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">User Id:</label>
-    <div class="col-sm-4">
-      {{ form.userID }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Score:</label>
-    <div class="col-sm-4">
-      {{ form.score }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-2 col-form-label">Interactions:</label>
-    <div class="col-sm-4">
-      {{ form.interactions }}
-    </div>
-  </div>
-    <div class="form-group row">
-    <label class="col-sm-1 col-form-label"></label>
-    <div class="col-sm-4">
-    <button type="submit" class="btn btn-primary">Submit</button>
-    </div>
-  </div>
-    </div>
-    <br>
-  <div>
-    <a href="{% url '_covidStocks:show' %}"> Display Table </a>
-  </div>
-</form>
+  <!-- <div class="sidenav">
+  <a onclick="symbol('JNJ')">JNJ</a>
+  <a onclick="symbol('PFE')">PFE</a>
+  <a onclick="symbol('MRNA')">MRNA</a>
+  <a onclick="symbol('AZN')">AZN</a>
+  <a onclick="symbol('GSK')">GSK</a>
+  <a onclick="symbol('NVAX')">NVAX</a>
+  <a onclick="symbol('MRK')">MRK</a>
+</div> -->
+
+<div class="main" id="graphdiv">
+  <img src="{% static 'JNJ.png' %}" alt="not good">
+  <p>Johnson & Johnson</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'AZN.png' %}" alt="not good">
+  <p>AstraZeneca</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'MRK.png' %}" alt="not good">
+  <p>Merck</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'GSK.png' %}" alt="not good">
+  <p>GlaxoSmithKline</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'MRNA.png' %}" alt="not good">
+  <p>Moderna</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'NVAX.png' %}" alt="not good">
+  <p>NovaVax</p>
+</div>
+<div class="main" id="graphdiv">
+  <img src="{% static 'PFE.png' %}" alt="not good">
+  <p>Pfizer</p>
+</div>
+<!-- <script>
+  var symbol;
+  var g;
+  function symbol(ticker) {
+    symbol = ticker;
+    var to_file = "{% static '"
+    path_to = to_file.concat(symbol,".png' %}")
+    console.log(path_to)
+    return path_to
+  }
+  $("#graphdiv").click(function(path_to) {
+      $('.graphdiv').attr("src",path_to);
+  });
+
+</script> -->
+<div>
+  <a href="{% url '_covidStocks:create' %}"> Create </a>
+</div>
 </body>
 </html>
