@@ -10,6 +10,9 @@ class Tweets(models.Model):
     score = models.FloatField()
     interactions = models.IntegerField()
 
+    def __str__(self):
+        return str(self.text)
+
 
 class Company(models.Model):
     companyID = models.AutoField(primary_key=True)

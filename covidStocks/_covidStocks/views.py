@@ -6,7 +6,8 @@ from django.db.models import Q
 import pprint
 from .forms import TweetForm,TweetEdit
 import pandas as pd
-
+from django.template.loader import render_to_string
+from django.http import JsonResponse
 from . import models
 import yfm
 from django.db.models import Avg, Count
@@ -85,8 +86,31 @@ def create(request):
 
 
 def show(request):
-    tweets = models.Tweets.objects.all()
-    return render(request,"show.html",{'tweetsArr':tweets})
+    ctx = {}
+    url_parameter = request.GET.get("q")
+
+    if url_parameter:
+        print('yes params')
+        tweets = models.Tweets.objects.filter(text__icontains=url_parameter)
+    else:
+        print("no params")
+        tweets = models.Tweets.objects.all()
+
+    ctx["tweetsArr"] = tweets
+
+
+    if request.is_ajax():
+        print('is ajax')
+        html = render_to_string(
+            template_name="tweets-results-partial.html",
+            context=ctx
+        )
+
+        data_dict = {"html_from_view": html}
+
+        return JsonResponse(data=data_dict, safe=False)
+
+    return render(request, "show.html", context=ctx)
 
 class show2(ListView):
     model = models.Tweets
@@ -100,7 +124,7 @@ class show2(ListView):
                 Q(text__icontains=query)
             )
         return tweets
-        
+
 def edit(request, id):
     tweets = models.Tweets.objects.get(tweetID=id)
     return render(request,'edit.html', {'tweet':tweets})
