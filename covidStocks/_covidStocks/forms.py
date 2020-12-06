@@ -3,7 +3,7 @@ from .models import Tweets,Company
 class TweetForm(forms.ModelForm):
     class Meta:
         model = Tweets
-        exclude = ('tweetID','companyID','date')
+        fields = "__all__"
 class TweetEdit(forms.Form):
     tweetID = forms.IntegerField(required=True)
     companyID = forms.ModelChoiceField(required=False, queryset=Company.objects.values('companyID'))

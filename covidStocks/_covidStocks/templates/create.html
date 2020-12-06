@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
 </head>
 <body>
-<form method="POST" class="post-form" action="/index">
+<form method="POST" class="post-form" action="/create">
         {% csrf_token %}
     <div class="container">
 <br>
@@ -17,7 +17,7 @@
     <h3>Enter Details</h3>
     </div>
   </div>
-    <!-- <div class="form-group row">
+    <div class="form-group row">
     <label class="col-sm-2 col-form-label">Tweet Id:</label>
     <div class="col-sm-4">
       {{ form.tweetID }}
@@ -34,7 +34,7 @@
     <div class="col-sm-4">
       {{ form.date }}
     </div>
-  </div> -->
+  </div>
     <div class="form-group row">
     <label class="col-sm-2 col-form-label">Text:</label>
     <div class="col-sm-4">

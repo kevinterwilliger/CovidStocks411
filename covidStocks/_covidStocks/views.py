@@ -75,13 +75,14 @@ def create(request):
         form = TweetForm(request.POST)
         if form.is_valid():
             try:
+                logger.error("here")
                 form.save()
                 return show(request)
             except:
                 logger.error("OOF")
                 pass
-
     form = TweetForm()
+    logger.error("bruh")
     return render(request,'create.html',{'form':form})
 
 
